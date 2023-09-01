@@ -111,7 +111,7 @@ function checkInput() {
     // console.log("input value =", input.value)
     // console.log("word value =", word)
 
-    if(input.value == word.value) {
+    if(input.value.toLowerCase() == word.value) {
         //console.log("juist")
         playSound(dingAudioFile)
         revealWord()
