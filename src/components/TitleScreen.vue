@@ -1,15 +1,35 @@
 <script setup>
-import { ref, defineEmits } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 
 const emit = defineEmits(['start-game'])
-let amountGames = ref(2);
+let amountGames = ref(3);
+let highScore = ref(0);
+let highScoreKey = 'highScore' + amountGames.value
+
+onMounted(() => {
+    getHighscore()
+})
 
 function startGame() {
     emit('start-game')
 }
 
+function setAmountGames(value) {
+    amountGames.value = value
+}
+
+function getHighscore() {
+    highScore.value = localStorage.getItem(highScoreKey) ? JSON.parse(localStorage.getItem(highScoreKey)) : 0
+}
+
+watch(amountGames, () => {
+    highScoreKey = "highScore" + amountGames.value
+    getHighscore()
+})
+
 defineExpose({
-    amountGames
+    amountGames,
+    setAmountGames
 })
 </script>
 
@@ -19,7 +39,15 @@ defineExpose({
         <p>Dit is een namaak van het categoriespelletje van het TV-programma Switch.</p>
         <p>Er is een woord, waarvan de letters verwisselt zijn. <br>Aan jou om te raden welk woord het is.</p>
 
-        <input type="number" v-model="amountGames" min="1">
+        <p style="margin: 0.2rem">Aantal spelletjes: </p>
+        <select name="amountGames" id="amountGames" v-model="amountGames">
+            <option value="3">3</option>
+            <option value="5">5</option>
+            <option value="10">10</option>
+        </select>
+
+        <p>Highscore: {{ highScore }}</p>
+        <!-- <input type="number" v-model="amountGames" min="1"> -->
 
         <button @click="startGame()">Speel</button>
     </div>
@@ -67,9 +95,9 @@ h1 {
     font-size: 3rem;
 }
 
-input {
+input, select {
     display: block;
-    margin: 2rem auto;
+    margin: 0 auto 2rem;
     font-size: 1.5rem;
     width: max-content;
     background-color: black;

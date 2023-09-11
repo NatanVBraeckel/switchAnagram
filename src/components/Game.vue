@@ -5,9 +5,13 @@ import { nextTick, onMounted, ref, watch } from 'vue'
 import revealAudioFile from '../assets/audio/pong.mp3'
 import bonkAudioFile from '../assets/audio/bonk.mp3'
 import yippeeAudioFile from '../assets/audio/yippee.mp3'
-import dingAudioFile from '../assets/audio/ding.mp3'
+import dingAudioFile from '../assets/audio/success.mp3'
 import lostAudioFile from '../assets/audio/lost.mp3'
 
+const reveal = new Audio(revealAudioFile)
+const bonk = new Audio(bonkAudioFile)
+const ding = new Audio(dingAudioFile)
+const lost = new Audio(lostAudioFile)
 
 const emit = defineEmits(['game-mounted', 'game-ended'])
 let word = ref(null);
@@ -19,6 +23,7 @@ let input = ref('');
 const inputElement = ref(null);
 let letterInterval = ref(null);
 let inputWidth = 0;
+let score = ref(0);
 
 onMounted(() => {
     emit('game-mounted');
@@ -37,8 +42,21 @@ const scramble = (word) => {
     return word;
 }
 
-function playSound(audioPath) {
-    new Audio(audioPath).play()
+
+const calcInputWidth = () => {
+  if(window.innerWidth > 1000) {
+        inputWidth = word.value.length * 4
+    } else {
+        inputWidth = word.value.length * 2
+    }
+};
+
+function playSound(audio) {
+    audio.play()
+}
+
+function addScore() {
+    score.value = lettersLeft.value * 100
 }
 
 async function startGame() {
@@ -69,7 +87,7 @@ async function startGame() {
     watch(lettersLeft, () => {
         if(lettersLeft.value == 0) {
             //console.error("geen letters meer g");
-            playSound(lostAudioFile)
+            playSound(lost)
             endGame();
         }
     })
@@ -97,7 +115,7 @@ function revealLetter() {
     lettersLeft.value--;
     
     if(lettersLeft.value > 0) {
-        playSound(revealAudioFile)
+        playSound(reveal)
     }
 }
 
@@ -113,11 +131,12 @@ function checkInput() {
 
     if(input.value.toLowerCase() == word.value) {
         //console.log("juist")
-        playSound(dingAudioFile)
+        playSound(ding)
         revealWord()
+        addScore()
         endGame()
     } else {
-        playSound(bonkAudioFile)
+        playSound(bonk)
         //console.log("fout")
     }
 
@@ -134,6 +153,7 @@ function endGame() {
 
 defineExpose({
     startGame,
+    score
 })
 </script>
 

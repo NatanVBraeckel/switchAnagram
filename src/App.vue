@@ -8,25 +8,50 @@ let resettingGame = ref(false);
 let game = ref(null);
 let gamesLeft = ref(0);
 let titleScreen = ref(null)
+let score = ref(0)
+let lastAmountGames = 3
+let highScore = localStorage.getItem(`highScore${lastAmountGames}`) ? JSON.parse(localStorage.getItem(`highScore${lastAmountGames}`)) : 0
 
 function startFullGame() {
   gamesLeft.value = titleScreen.value.amountGames
+  lastAmountGames = titleScreen.value.amountGames
   gameActive.value = true;
+  score.value = 0
 }
 
 async function gameEnded() {
   gamesLeft.value--
+  console.log("game score =", game.value.score)
+  score.value = score.value + game.value.score
+  console.log("nieuwe score =", score.value)
   if(gamesLeft.value > 0) {
     resettingGame.value = true
     await nextTick()
     resettingGame.value = false
   } else {
     gameActive.value = false
+    await nextTick()
+    titleScreen.value.setAmountGames(lastAmountGames)
+    checkHighScore()
+    score.value = 0
   }
 }
 
 function gameMounted() {
   game.value.startGame()
+}
+
+function checkHighScore() {
+  if(score.value > highScore) {
+    console.log("new high score!")
+    updateHighScore(score.value)
+  }
+}
+
+function updateHighScore(newHighScore) {
+  let highScoreKey = 'highScore' + lastAmountGames
+  localStorage.setItem(highScoreKey, score.value);
+  highScore = newHighScore
 }
 </script>
 
