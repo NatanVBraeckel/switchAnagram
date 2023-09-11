@@ -52,6 +52,7 @@ function updateHighScore(newHighScore) {
   let highScoreKey = 'highScore' + lastAmountGames
   localStorage.setItem(highScoreKey, score.value);
   highScore = newHighScore
+  titleScreen.value.getHighscore()
 }
 </script>
 

@@ -29,7 +29,8 @@ watch(amountGames, () => {
 
 defineExpose({
     amountGames,
-    setAmountGames
+    setAmountGames,
+    getHighscore
 })
 </script>
 

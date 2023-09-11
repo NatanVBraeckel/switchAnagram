@@ -1,5 +1,5 @@
 <script setup>
-import { nextTick, onMounted, ref, watch } from 'vue'
+import { nextTick, onMounted, ref, watch, onBeforeUnmount } from 'vue'
 
 //sounds
 import revealAudioFile from '../assets/audio/pong.mp3'
@@ -27,6 +27,10 @@ let score = ref(0);
 
 onMounted(() => {
     emit('game-mounted');
+})
+
+onBeforeUnmount(() => {
+    window.removeEventListener('resize', calcInputWidth);
 })
 
 const scramble = (word) => {
@@ -65,7 +69,8 @@ async function startGame() {
 
     await nextTick()
 
-    inputWidth = word.value.length * 4
+    calcInputWidth()
+    window.addEventListener('resize', calcInputWidth);
     inputElement.value.focus()
 
     answerWord.value = word.value.split('');
@@ -196,18 +201,18 @@ defineExpose({
 
 section {
     font-family: "Noto Sans Mono", monospace;
-    font-size: 3.5rem;
+    font-size: 1.75rem;
     text-transform: uppercase;
     color: #f2e1c2;
     display: inline-block;
     margin: auto;
 }
 section span {
-    width: 2rem;
+    width: 1rem;
 }
 .anagram {
     position: relative;
-    padding: 0.8rem 2rem;
+    padding: 0.4rem 1rem;
     justify-content: space-between;
     margin-bottom: 3rem;
 
@@ -216,13 +221,13 @@ section span {
 }
 .anagram .word {
     display: flex;
-    gap: 1.5rem;
+    gap: .75rem;
     animation: fade-in 750ms ease both;
     animation-delay: 600ms;
 }
 
 .anagram img {
-    height: 2.5rem;
+    height: 1.25rem;
     width: auto;
     position: absolute;
 }
@@ -246,20 +251,20 @@ section span {
     transform: rotate(180deg);
 }
 section .answer {
-  padding-inline: 2rem;
+  padding-inline: 1rem;
   background-color: rgba(0, 0, 0, 0.3);
   display: flex;
-  height: 76px;
+  height: 60px;
   justify-content: space-between;
   align-items: center;
   border-radius: 5px;
 }
 .square {
-  height: 1rem;
-  width: 1rem;
-  margin-inline: 0.5rem;
+  height: .5rem;
+  width: .5rem;
+  margin-inline: 0.25rem;
   background-color: #D5400A;
-  border-radius: 4px;
+  border-radius: 2px;
 }
 
 form {
@@ -270,7 +275,7 @@ form {
 
 form input {
   font-family: "Noto Sans Mono", monospace;
-  font-size: 3rem;
+  font-size: 1.5rem;
   font-weight: 600;
   text-transform: uppercase;
   text-align: center;
@@ -279,6 +284,45 @@ form input {
   border: none;
   background-color: rgba(0, 0, 0, 0.3);
   padding: 0.5rem;
+}
+
+@media screen and (min-width: 1000px) {
+    section {
+        font-size: 3.5rem;
+    }
+    section span {
+        width: 2rem;
+    }
+    .anagram {
+        padding: 0.8rem 2rem;
+    }
+    .anagram .word {
+        gap: 1.5rem;
+    }
+
+    .anagram img {
+        height: 2.5rem;
+    }
+    section .answer {
+    padding-inline: 2rem;
+    background-color: rgba(0, 0, 0, 0.3);
+    display: flex;
+    height: 76px;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 5px;
+    }
+    .square {
+        height: 1rem;
+        width: 1rem;
+        margin-inline: 0.5rem;
+        border-radius: 4px;
+    }
+
+    form input {
+    font-size: 3rem;
+    padding: 0.5rem;
+    }
 }
 
 @keyframes fade-in {
