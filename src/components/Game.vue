@@ -4,7 +4,6 @@ import { nextTick, onMounted, ref, watch, onBeforeUnmount } from 'vue'
 //sounds
 import revealAudioFile from '../assets/audio/pong.mp3'
 import bonkAudioFile from '../assets/audio/bonk.mp3'
-import yippeeAudioFile from '../assets/audio/yippee.mp3'
 import dingAudioFile from '../assets/audio/success.mp3'
 import lostAudioFile from '../assets/audio/lost.mp3'
 
