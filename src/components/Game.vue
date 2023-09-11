@@ -1,5 +1,5 @@
 <script setup>
-import { nextTick, onMounted, ref, watch } from 'vue'
+import { nextTick, onMounted, ref, watch, onBeforeUnmount } from 'vue'
 
 //sounds
 import revealAudioFile from '../assets/audio/pong.mp3'
@@ -28,6 +28,10 @@ let score = ref(0);
 onMounted(() => {
     emit('game-mounted');
 })
+
+onBeforeUnmount(() => {
+    window.removeEventListener('resize', calcInputWidth);
+});
 
 const scramble = (word) => {
     let strarray = word.value.split('');           
