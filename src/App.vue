@@ -48,9 +48,9 @@ function startFullGame() {
 
 async function gameEnded() {
   gamesLeft.value--
-  console.log("game score =", game.value.score)
+  //console.log("game score =", game.value.score)
   score.value = score.value + game.value.score
-  console.log("nieuwe score =", score.value)
+  //console.log("nieuwe score =", score.value)
   if(gamesLeft.value > 0) {
     resettingGame.value = true
     await nextTick()
