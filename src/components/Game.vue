@@ -1,5 +1,5 @@
 <script setup>
-import { nextTick, onMounted, ref, watch, onBeforeUnmount } from 'vue'
+import { nextTick, onMounted, ref, watch } from 'vue'
 
 //sounds
 import revealAudioFile from '../assets/audio/pong.mp3'
@@ -29,10 +29,6 @@ onMounted(() => {
     emit('game-mounted');
 })
 
-onBeforeUnmount(() => {
-    window.removeEventListener('resize', calcInputWidth);
-})
-
 const scramble = (word) => {
     let strarray = word.value.split('');           
     var i,j,k
@@ -45,7 +41,6 @@ const scramble = (word) => {
     word = strarray.join('');  
     return word;
 }
-
 
 const calcInputWidth = () => {
   if(window.innerWidth > 1000) {
