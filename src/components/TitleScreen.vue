@@ -2,12 +2,23 @@
 import { onMounted, ref, watch } from 'vue'
 import Modal from './Modal.vue';
 import { getHighScore as getHighScoreService, resetHighScores, resetHighScore, getHighScoreKeys } from '../services/highscoreService';
+import { getChosenWordFunction, getChosenWordLength, setChosenWordFunction, setChosenWordLength } from '../services/wordService';
 
 const emit = defineEmits(['start-game'])
 let amountGames = ref(3);
 let highScore = ref(0);
 let highScoreKey = 'highScore' + amountGames.value
 let showOptions = ref(false)
+let wordFunction = ref(getChosenWordFunction())
+let chosenLength = ref(getChosenWordLength())
+
+watch(wordFunction, () => {
+    setChosenWordFunction(wordFunction.value)
+})
+
+watch(chosenLength, () => {
+    setChosenWordLength(chosenLength.value)
+})
 
 onMounted(() => {
     getHighscore()
@@ -53,13 +64,22 @@ defineExpose({
 
 <template>
     <Modal @confirm="saveOptions()" @cancel="hideModal()" v-if="showOptions" :show-cancel="false" :show-confirm="false">
+        <div class="options_row">
+            <p>Hoe woord verkrijgen?</p>
+            <select class="word" v-model="wordFunction">
+                <option value="api">API</option>
+                <option value="woordenlijst">Woordenlijst (willekeurige lengte)</option>
+                <option value="gekozenLengte">Woordenlijst (gekozen lengte)</option>
+            </select>
+            <input type="number" min="5" max="12" v-if="wordFunction == 'gekozenLengte'" v-model="chosenLength" class="length_word">
+        </div>
         <div v-for="key in getHighScoreKeys()" class="options_row">
-            <p>Reset highscore voor {{ key.replace("highScore", "") }} spellejtes</p>
-            <button @click="resetHighScore(key)">Reset</button>
+            <p>Reset highscore voor {{ key.replace("highScore", "") }} spelletjes</p>
+            <button @click="resetHighScore(key)" class="reset">Reset</button>
         </div>
         <div class="options_row">
             <p>Reset high scores</p>
-            <button @click="resetHighScores()">Reset</button>
+            <button @click="resetHighScores()" class="reset">Reset</button>
         </div>
     </Modal>
 
@@ -73,14 +93,13 @@ defineExpose({
         <p>Er is een woord, waarvan de letters verwisselt zijn. <br>Aan jou om te raden welk woord het is.</p>
 
         <p style="margin: 0.2rem">Aantal spelletjes: </p>
-        <select name="amountGames" id="amountGames" v-model="amountGames">
+        <select name="amountGames" id="amountGames" v-model="amountGames" class="amount_games">
             <option value="3">3</option>
             <option value="5">5</option>
             <option value="10">10</option>
         </select>
 
         <p>Highscore: {{ highScore }}</p>
-        <!-- <input type="number" v-model="amountGames" min="1"> -->
 
         <button @click="startGame()" class="startgame">Speel</button>
     </div>
@@ -90,7 +109,9 @@ defineExpose({
 .options_row {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     margin-top: 1rem;
+    gap: .5rem;
 }
 
 .options_row p {
@@ -102,6 +123,9 @@ defineExpose({
     border-radius: 10px;
     color: white;
     background-color: #062c44;
+}
+button.reset {
+    padding: .75rem 1rem;
 }
 button.options {
     height: 3rem;
@@ -151,15 +175,30 @@ h1 {
 }
 
 input, select {
+    height: 2rem;
+    background-color: #111;
+    color: white;
+    border: 1px solid white;
+    border-radius: 5px;
+    text-align: center;
+}
+
+input.length_word {
+    width: 3rem;
+}
+select.amount_games {
     display: block;
     margin: 0 auto 2rem;
     font-size: 1.5rem;
     width: max-content;
-    background-color: black;
+    width: 4rem;
+}
+
+select.word {
+    background-color: #111;
     color: white;
     border: 1px solid white;
     border-radius: 5px;
-    width: 4rem;
     text-align: center;
 }
 
@@ -189,19 +228,6 @@ input, select {
 
     h1 {
         font-size: 5rem;
-    }
-
-    input {
-        display: block;
-        margin: 2rem auto;
-        font-size: 1.5rem;
-        width: max-content;
-        background-color: #111;
-        color: white;
-        border: 1px solid white;
-        border-radius: 5px;
-        width: 4rem;
-        text-align: center;
     }
 }
 

@@ -12,7 +12,16 @@ function resetHighScore(key) {
 
 function getHighScoreKeys() {
     const keys = Object.keys(localStorage);
-    return keys.filter(key => key.startsWith('highScore'));
+
+    // Custom sorting function to order keys numerically
+    const sortedKeys = keys.sort((a, b) => {
+        const numA = parseInt(a.match(/highScore(\d+)/)?.[1] || "0");
+        const numB = parseInt(b.match(/highScore(\d+)/)?.[1] || "0");
+
+        return numA - numB;
+    });
+
+    return sortedKeys.filter(key => key.startsWith('highScore'));
 }
 
 function resetHighScores() {
