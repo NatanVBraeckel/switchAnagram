@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, ref, watch } from 'vue'
 import Modal from './Modal.vue';
+import { getHighScore as getHighScoreService, resetHighScores, resetHighScore, getHighScoreKeys } from '../services/highscoreService';
 
 const emit = defineEmits(['start-game'])
 let amountGames = ref(3);
@@ -21,7 +22,7 @@ function setAmountGames(value) {
 }
 
 function getHighscore() {
-    highScore.value = localStorage.getItem(highScoreKey) ? JSON.parse(localStorage.getItem(highScoreKey)) : 0
+    highScore.value = getHighScoreService(highScoreKey)
 }
 
 function saveOptions() {
@@ -31,6 +32,7 @@ function saveOptions() {
 
 function hideModal() {
     showOptions.value = false
+    getHighscore()
 }
 
 function showModal() {
@@ -51,9 +53,13 @@ defineExpose({
 
 <template>
     <Modal @confirm="saveOptions()" @cancel="hideModal()" v-if="showOptions" :show-cancel="false" :show-confirm="false">
+        <div v-for="key in getHighScoreKeys()" class="options_row">
+            <p>Reset highscore voor {{ key.replace("highScore", "") }} spellejtes</p>
+            <button @click="resetHighScore(key)">Reset</button>
+        </div>
         <div class="options_row">
             <p>Reset high scores</p>
-            <button>Reset</button>
+            <button @click="resetHighScores()">Reset</button>
         </div>
     </Modal>
 

@@ -3,6 +3,7 @@ import { ref, nextTick, onMounted, onBeforeUnmount } from "vue";
 import TitleScreen from './components/TitleScreen.vue';
 import Game from './components/Game.vue';
 import ConfettiExplosion from "vue-confetti-explosion";
+import { getHighScore, updateHighScore } from "./services/highscoreService";
 
 import highScoreAudioFile from './assets/audio/highscore.mp3'
 const confettiSound = new Audio(highScoreAudioFile)
@@ -14,7 +15,6 @@ let gamesLeft = ref(0);
 let titleScreen = ref(null)
 let score = ref(0)
 let lastAmountGames = 3
-let highScore = localStorage.getItem(`highScore${lastAmountGames}`) ? JSON.parse(localStorage.getItem(`highScore${lastAmountGames}`)) : 0
 let showConfetti = ref(false);
 let windowWidth = ref(window.innerWidth * 0.9)
 let windowHeight = ref(window.innerHeight * 0.9)
@@ -69,18 +69,12 @@ function gameMounted() {
 }
 
 function checkHighScore() {
-  if(score.value > highScore) {
+  if(score.value > getHighScore('highScore' + lastAmountGames)) {
     console.log("new high score!")
     confetti()
-    updateHighScore(score.value)
+    updateHighScore('highScore' + lastAmountGames, score.value)
+    titleScreen.value.getHighscore()
   }
-}
-
-function updateHighScore(newHighScore) {
-  let highScoreKey = 'highScore' + lastAmountGames
-  localStorage.setItem(highScoreKey, score.value);
-  highScore = newHighScore
-  titleScreen.value.getHighscore()
 }
 </script>
 
