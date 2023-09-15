@@ -1,10 +1,12 @@
 <script setup>
 import { onMounted, ref, watch } from 'vue'
+import Modal from './Modal.vue';
 
 const emit = defineEmits(['start-game'])
 let amountGames = ref(3);
 let highScore = ref(0);
 let highScoreKey = 'highScore' + amountGames.value
+let showOptions = ref(false)
 
 onMounted(() => {
     getHighscore()
@@ -22,6 +24,19 @@ function getHighscore() {
     highScore.value = localStorage.getItem(highScoreKey) ? JSON.parse(localStorage.getItem(highScoreKey)) : 0
 }
 
+function saveOptions() {
+    console.log("options have been saved")
+    hideModal()
+}
+
+function hideModal() {
+    showOptions.value = false
+}
+
+function showModal() {
+    showOptions.value = true
+}
+
 watch(amountGames, () => {
     highScoreKey = "highScore" + amountGames.value
     getHighscore()
@@ -35,7 +50,18 @@ defineExpose({
 </script>
 
 <template>
+    <Modal @confirm="saveOptions()" @cancel="hideModal()" v-if="showOptions" :show-cancel="false" :show-confirm="false">
+        <div class="options_row">
+            <p>Reset high scores</p>
+            <button>Reset</button>
+        </div>
+    </Modal>
+
     <div class="container">
+        <button @click.stop="showModal()" class="options">
+            <img src="../assets/cog.svg" alt="options" style="width: 100%; height: 100%;">
+        </button>
+
         <h1>SWITCH</h1>
         <p>Dit is een namaak van het categoriespelletje van het TV-programma Switch.</p>
         <p>Er is een woord, waarvan de letters verwisselt zijn. <br>Aan jou om te raden welk woord het is.</p>
@@ -50,13 +76,38 @@ defineExpose({
         <p>Highscore: {{ highScore }}</p>
         <!-- <input type="number" v-model="amountGames" min="1"> -->
 
-        <button @click="startGame()">Speel</button>
+        <button @click="startGame()" class="startgame">Speel</button>
     </div>
 </template>
 
 <style scoped>
+.options_row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1rem;
+}
 
-button {
+.options_row p {
+    color: white;
+}
+.options_row button {
+    cursor: pointer;
+    border: 1px solid #083853;
+    border-radius: 10px;
+    color: white;
+    background-color: #062c44;
+}
+button.options {
+    height: 3rem;
+    width: 3rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+button.startgame {
     background-color: lightgreen;
     font-weight: bold;
     text-transform: uppercase;
@@ -64,14 +115,11 @@ button {
     border: 2px solid green;
     font-size: 2rem;
     border-radius: 15px;
-}
-
-button:hover {
     cursor: pointer;
 }
-
 .container {
     background-color: rgba(0,0,0,0.5);
+    position: relative;
     color: white;
     width: 60vw;
     min-width: 80vw;
@@ -110,19 +158,6 @@ input, select {
 }
 
 @media screen and (min-width: 500px) {
-    button {
-        background-color: lightgreen;
-        font-weight: bold;
-        text-transform: uppercase;
-        padding: 20px;
-        border: 2px solid green;
-        font-size: 2rem;
-        border-radius: 15px;
-    }
-
-    button:hover {
-        cursor: pointer;
-    }
 
     .container {
         background-color: rgba(0,0,0,0.5);
