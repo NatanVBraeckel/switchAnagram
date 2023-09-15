@@ -30,7 +30,7 @@
             <div class="body">
                 <slot></slot>
             </div>
-            <div class="footer">
+            <div class="footer" v-if="showCancel || showConfirm">
                 <button class="secondary" @click.stop="$emit('cancel')" v-if="showCancel">{{ cancelText }}</button>
                 <button class="primary" @click.stop="$emit('confirm')" v-if="showConfirm">{{ confirmText }}</button>
             </div>
@@ -57,11 +57,13 @@
         height: 400px;
         border: 1px solid #094563;
         border-radius: 10px;
+        display: flex;
+        flex-direction: column;
     }
 
     .header {
+        flex-basis: 10%;
         border-bottom: 1px solid #094563;
-        height: 10%;
         position: relative;
         display: flex;
         align-items: center;
@@ -85,14 +87,14 @@
         margin-left: .5rem;
     }
 
-
     .body {
-        height: 75%;
-        margin-inline: 1rem;
+        flex-basis: 75%;
+        flex-grow: 1;
+        flex-shrink: 0;
+        padding-inline: 1rem;
     }
 
     .footer {
-        height: 15%;
         border-top: 1px solid #094563;
         display: flex;
         justify-content: space-around;

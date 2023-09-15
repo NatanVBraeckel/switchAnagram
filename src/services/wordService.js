@@ -55,4 +55,21 @@ async function getWordFromApi() {
         });
 }
 
-export { getWordOfRandomLength, getWordOfLength, getWordFromApi };
+function setChosenWordFunction(wordFunctionString) {
+    localStorage.setItem('wordFunction', wordFunctionString)
+}
+
+function setChosenWordLength(wordLengthInt) {
+    localStorage.setItem('wordLength', wordLengthInt)
+}
+
+function getChosenWordFunction() {
+    return localStorage.getItem('wordFunction') ?? 'api'
+}
+
+function getChosenWordLength() {
+    return localStorage.getItem('wordLength') ?? 5
+}
+
+export { getWordOfRandomLength, getWordOfLength, getWordFromApi, setChosenWordFunction,
+     getChosenWordFunction, setChosenWordLength, getChosenWordLength };

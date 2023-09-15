@@ -6,7 +6,9 @@ import revealAudioFile from '../assets/audio/pong.mp3'
 import bonkAudioFile from '../assets/audio/bonk.mp3'
 import dingAudioFile from '../assets/audio/success.mp3'
 import lostAudioFile from '../assets/audio/lost.mp3'
-import { getWordOfRandomLength, getWordOfLength, getWordFromApi } from '../services/wordService'
+import { getWordOfRandomLength, getWordOfLength, getWordFromApi, 
+        getChosenWordFunction, getChosenWordLength } from '../services/wordService';
+
 
 const reveal = new Audio(revealAudioFile)
 const bonk = new Audio(bonkAudioFile)
@@ -62,8 +64,21 @@ function addScore() {
     score.value = lettersLeft.value * 100
 }
 
+async function getWord() {
+    switch (getChosenWordFunction()) {
+        case 'api':
+            return getWordFromApi()
+        case 'woordenlijst':
+            return getWordOfRandomLength()
+        case 'gekozenLengte':
+            return getWordOfLength(getChosenWordLength())
+        default:
+            return 'error'
+      }
+}
+
 async function startGame() {
-    word.value = await getWordFromApi()
+    word.value = await getWord()
     console.log(`%c${word.value}`, 'color: #2be0e3');
 
     await nextTick()
